@@ -13,34 +13,34 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
-public class Launcher extends SubsystemBase {
+public class DriveTrain  extends SubsystemBase {
 
+    private SparkMax motor1;
+    private SparkMax motor2;
+    private SparkMax motor3;
     private SparkMax motor4;
-        private final RelativeEncoder motor1Encoder;
 
 
 
 
-    public Launcher() {
-        motor4 = new SparkMax(6, MotorType.kBrushed);
 
-        motor1Encoder = motor4.getEncoder();
+    public DriveTrain() {
+        motor1 = new SparkMax(1, MotorType.kBrushed);
+        motor2 = new SparkMax(2, MotorType.kBrushed);
+        motor3 = new SparkMax(3, MotorType.kBrushed);
+        motor4 = new SparkMax(4, MotorType.kBrushed);
+        
+      
        
     }
 
-public void Spin(double value) {
+public void Drive(double left, double right)
+ {
+    motor2.set(-right);
+    //motor3.set(-right);
 
-
-    motor4.set(value);
-}
-
-public void Spin() {
-    motor4.set(0);
-   
-}
-
-public double get_encoder(){
-    return motor1Encoder.getPosition();
+    motor1.set(-left);
+    //motor4.set(-left);
 }
 
 }

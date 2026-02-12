@@ -2,9 +2,6 @@ package frc.robot;
 
 import java.util.List;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -29,69 +26,60 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.SwerveJoystickCmd;
-import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.commands.resetheading;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoSink;
 import edu.wpi.first.cscore.VideoSource;
 import edu.wpi.first.cscore.VideoSource;
 
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Launcher;
-import frc.robot.subsystems.Elevator;
-
-import frc.robot.subsystems.Arm;
-
+import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Grabber;
 
 
 
 import frc.robot.commands.Launch;
-
-
+import frc.robot.commands.drive;
 import frc.robot.commands.Intake;
+import frc.robot.commands.Launch;
+
 
 
 
 
 public class RobotContainer {
 
-        private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
       
-        private final Climber climber = new Climber();
-  
-
-        private final Arm arm = new Arm();
-
-        private final Elevator elevator = new Elevator();
-
+       
+    
         private final Launcher launcher = new Launcher();
+        private final Grabber grabber = new Grabber();
+        private final DriveTrain drivetrain = new DriveTrain();
         
         
         private final SendableChooser<Command> autoChooser;
 
-        private final Joystick driverJoytick = new Joystick(OIConstants.kDriverControllerPort);
+        private final XboxController driverJoytick = new XboxController(0);
 
-        private final XboxController operatorJoytick = new XboxController(OIConstants.kOperatorControllerPort);
         SendableChooser<Command> m_Chooser = new SendableChooser<>();
 
         public RobotContainer() {
           
                 
 
-                autoChooser = AutoBuilder.buildAutoChooser();
+                autoChooser = m_Chooser;
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
 
                 //m_Chooser.setDefaultOption("Auto Command", getAutonomousCommand());
                 SmartDashboard.putData("Auto Mode",m_Chooser);
-                swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(
+                drivetrain.setDefaultCommand(new drive(drivetrain, driverJoytick));
+             /*    swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(
                                 swerveSubsystem,
                                 () -> -driverJoytick.getRawAxis(OIConstants.kDriverYAxis),
                                 () -> -driverJoytick.getRawAxis(OIConstants.kDriverXAxis),
                                 () -> -driverJoytick.getRawAxis(OIConstants.kDriverRotAxis),
-                                () -> !driverJoytick.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx)));
+                                () -> !driverJoytick.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx)));*/
                 // launcher.setDefaultCommand(new Shooter(launcher));
                 configureButtonBindings();
                 // Ported Camera Code
@@ -118,16 +106,11 @@ public class RobotContainer {
         }
 
         private void configureButtonBindings () {
-                new JoystickButton(driverJoytick, 2).whileTrue(new resetheading(swerveSubsystem));
+                //new JoystickButton(driverJoytick, 2).whileTrue(new resetheading(swerveSubsystem));
                 // Launch
-             //   new JoystickButton(operatorJoytick, 6).whileTrue(new Launch(launcher));
-               // new JoystickButton(operatorJoytick, 7).whileTrue(new Intake(launcher));
-                new JoystickButton(driverJoytick, 3).whileTrue(new SwerveJoystickCmd(
-                                swerveSubsystem,
-                                () -> -driverJoytick.getRawAxis(OIConstants.kDriverYAxis),
-                                () -> -driverJoytick.getRawAxis(OIConstants.kDriverXAxis),
-                                () -> LimelightHelpers.getTX("limelight") *-0.019,
-                                () -> !driverJoytick.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx)));
+               new JoystickButton(driverJoytick, 6).whileTrue(new Launch(launcher));
+               new JoystickButton(driverJoytick, 5).whileTrue(new Intake(grabber));
+             
 
 /*8 
                 new JoystickButton(operatorJoytick, 8).whileTrue(new Climb(climber));
